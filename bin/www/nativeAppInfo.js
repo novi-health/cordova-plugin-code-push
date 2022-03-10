@@ -8,7 +8,14 @@
 
 
 "use strict";
-var DefaultServerUrl = "https://codepush.appcenter.ms/";
+var PREFERENCE_SERVER_URL = "CODE_PUSH_SERVER_URL";
+var PREFERENCE_DEPLOYMENT_KEY = "CODE_PUSH_DEPLOYMENT_KEY";
+var getFromWindow = function (key) {
+    if (typeof window === "undefined") {
+        return undefined;
+    }
+    return window[key];
+};
 var NativeAppInfo = (function () {
     function NativeAppInfo() {
     }
@@ -28,11 +35,17 @@ var NativeAppInfo = (function () {
         cordova.exec(binaryHashSuccess, binaryHashError, "CodePush", "getBinaryHash", []);
     };
     NativeAppInfo.getServerURL = function (serverCallback) {
+        if (getFromWindow(PREFERENCE_SERVER_URL) !== undefined) {
+            return serverCallback(null, getFromWindow(PREFERENCE_SERVER_URL));
+        }
         var serverSuccess = function (serverURL) { serverCallback(null, serverURL); };
-        var serverError = function () { serverCallback(null, DefaultServerUrl); };
+        var serverError = function () { serverCallback(new Error("Unable to find codepush serverUrl."), null); };
         cordova.exec(serverSuccess, serverError, "CodePush", "getServerURL", []);
     };
     NativeAppInfo.getDeploymentKey = function (deploymentKeyCallback) {
+        if (getFromWindow(PREFERENCE_DEPLOYMENT_KEY) !== undefined) {
+            return deploymentKeyCallback(null, getFromWindow(PREFERENCE_SERVER_URL));
+        }
         var deploymentSuccess = function (deploymentKey) { deploymentKeyCallback(null, deploymentKey); };
         var deploymentError = function () { deploymentKeyCallback(new Error("Deployment key not found."), null); };
         cordova.exec(deploymentSuccess, deploymentError, "CodePush", "getDeploymentKey", []);
