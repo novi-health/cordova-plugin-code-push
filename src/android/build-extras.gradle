@@ -20,7 +20,7 @@
        under the License.
  */
 ext.postBuildExtras = {
-    
+
     def inAssetsDir = file("src/main/assets")
     if (!inAssetsDir.exists()) { // Add support for cordova-android < 7.0.0
         inAssetsDir = file("assets")
@@ -63,5 +63,5 @@ android.buildTypes.each {
 }
 
 dependencies {
-    compile('com.nimbusds:nimbus-jose-jwt:5.1') { exclude group: "net.minidev", module: "json-smart" }
+    implementation('com.nimbusds:nimbus-jose-jwt:5.1') { exclude group: "net.minidev", module: "json-smart" }
 }
